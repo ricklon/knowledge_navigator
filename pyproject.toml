@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "knowledge-navigator"
+version = "0.1.0"
+description = ""
+authors = ["Rick Anderson"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+streamlit = "^1.33.0"
+pandas = "^2.2.1"
+streamlit-aggrid = "^1.0.2"
+beautifulsoup4 = "^4.12.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
