@@ -11,6 +11,28 @@ Knowledge Navigator is a Streamlit-based application designed to streamline the 
 - Integration with LangChain for question-answering
 - State management for session continuity and data recovery
 
+## File organization
+
+```
+streamlit_app/
+│
+├── .streamlit/                 # Streamlit configuration
+│
+├── pages/                      # Directory for pages
+│   ├── 01_data_collection.py   # Data collection page
+│   ├── 02_data_organization.py # Data organization page
+│   ├── 03_model_selection.py   # Model selection page
+│   ├── 04_encoding_storage.py  # Encoding and storage page
+│   └── 05_testing_qa.py        # Testing and QA page
+│
+├── utils/                      # Utility functions and classes
+│   ├── data_processing.py      # Data processing utilities
+│   ├── model_utils.py          # Model-related utilities
+│   └── storage_utils.py        # Storage and backup utilities
+│
+└── app.py                      # Main application entry point
+```
+
 ## Installation
 
 To set up Knowledge Navigator, ensure you have Python 3.6+ and pip installed on your system. Follow these steps:

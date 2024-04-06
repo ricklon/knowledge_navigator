@@ -35,67 +35,60 @@ def categorize_links(base_url, links):
     return internal_links, external_links
 
 def display_editable_table(df):
-    edited_df = st.data_editor(data=df, key="data_editor_key")
+    edited_df = st.data_editor(data=df, key="data_editor_key", num_rows="dynamic")  # Add num_rows="dynamic" to allow adding/deleting rows
     return edited_df
+
+def prepare_dataframe(df):
+    if "Ignore" not in df.columns:
+        df["Ignore"] = False  # Initialize all values as False
+    return df
+
+def store_data(df):
+    st.session_state['data'] = df
 
 def main():
     st.title("Data Source Configuration")
     
+    # Initialize 'scanned_urls' with all columns, including 'Ignore'
     if 'scanned_urls' not in st.session_state:
-        st.session_state['scanned_urls'] = pd.DataFrame(columns=['URL', 'Type', 'Page Name', 'Scanned DateTime'])
+        st.session_state['scanned_urls'] = pd.DataFrame(columns=['URL', 'Type', 'Page Name', 'Scanned DateTime', 'Ignore'])
     
-    # Handling the clear table action
-    if clear_table_clicked:
-        st.session_state['scanned_urls'] = pd.DataFrame(columns=['URL', 'Type', 'Page Name', 'Scanned DateTime'])
-    
-    # Display the table for editing and selection
-    if not st.session_state['scanned_urls'].empty:
-        selected_rows = st.multiselect("Select rows to delete (by index):", st.session_state['scanned_urls'].index)
-        
-        # Handling row deletion
-        if delete_rows_clicked and selected_rows:
-            st.session_state['scanned_urls'] = st.session_state['scanned_urls'].drop(selected_rows).reset_index(drop=True)
-        
-        edited_df = display_editable_table(st.session_state['scanned_urls'])
-        st.session_state['scanned_urls'] = edited_df
-
-        # Convert DataFrame to CSV for download
-        csv = edited_df.to_csv(index=False).encode('utf-8')
-        st.download_button(
-            label="Download URLs as CSV",
-            data=csv,
-            file_name='urls.csv',
-            mime='text/csv',
-        )
-
     st.subheader("Scan Websites for URLs")
-    url_input = st.text_area("Enter URLs to scan, separated by new lines:")
+    url_input = st.text_area("Enter URLs to scan, separated by new lines:", "https://fubarlabs.org")
     url_list = [url.strip() for url in url_input.strip().split('\n') if url.strip()]
-
     scan_button_clicked = st.button("Scan URLs")
+    
     if scan_button_clicked:
         for url in url_list:
             unique_urls, page_title = find_linked_urls_and_title(url)
             scan_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             absolute_urls = convert_to_absolute_urls(url, unique_urls)
             internal_links, external_links = categorize_links(url, absolute_urls)
-            new_entries = pd.DataFrame([(url, 'Internal', page_title, scan_datetime) for url in internal_links] +
-                                       [(url, 'External', page_title, scan_datetime) for url in external_links],
-                                       columns=['URL', 'Type', 'Page Name', 'Scanned DateTime'])
+            
+            new_entries = pd.DataFrame([(url, 'Internal', page_title, scan_datetime, False) for url in internal_links] + 
+                                       [(url, 'External', page_title, scan_datetime, False) for url in external_links],
+                                       columns=['URL', 'Type', 'Page Name', 'Scanned DateTime', 'Ignore'])  # Include 'Ignore' column
             st.session_state['scanned_urls'] = pd.concat([st.session_state['scanned_urls'], new_entries]).drop_duplicates().reset_index(drop=True)
+            store_data(st.session_state['scanned_urls'])
 
     if not st.session_state['scanned_urls'].empty:
-        edited_df = display_editable_table(st.session_state['scanned_urls'])
-        st.session_state['scanned_urls'] = edited_df
+        # Prepare the dataframe, this now includes the 'Ignore' column from the start
+        prepared_df = prepare_dataframe(st.session_state['scanned_urls'])
+        
+        # Display the editable table with an "Ignore" column
+        edited_df = display_editable_table(prepared_df)
+        
+        if edited_df is not None:
+            st.session_state['scanned_urls'] = edited_df
 
-        # Convert DataFrame to CSV for download
-        csv = edited_df.to_csv(index=False).encode('utf-8')
-        st.download_button(
-            label="Download URLs as CSV",
-            data=csv,
-            file_name='urls.csv',
-            mime='text/csv',
-        )
+        # Access the edits made to the table
+        if "data_editor_key" in st.session_state:
+            edits = st.session_state["data_editor_key"]
+            st.write("Edits made to the table:")
+            st.write(edits)
+
+        if st.button('Proceed to Data Organization'):
+            st.switch_page('pages/02_data_organization.py')
 
 if __name__ == "__main__":
     main()
