@@ -1,4 +1,6 @@
 import streamlit as st
+from menu import menu
+
 import pandas as pd
 import requests
 from bs4 import BeautifulSoup
@@ -47,6 +49,8 @@ def store_data(df):
     st.session_state['data'] = df
 
 def main():
+    #menu()
+
     st.title("Data Source Configuration")
     
     # Initialize 'scanned_urls' with all columns, including 'Ignore'

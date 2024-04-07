@@ -1,31 +1,33 @@
 import streamlit as st
-from pages import data_collection, data_organization
-import pandas as pd
+import  os
+from menu import menu
 
-
-st.title('Knowledge Navigator')
+st.set_page_config(page_title='Knowledge Navigator', layout='wide')
 
 def main():
-    st.set_page_config(page_title='My App', layout='wide')
+    st.title('Knowledge Navigator')
+
+    # Button to go back to Data Collection Page
+    if st.button('Go to Data Collection'):
+        st.switch_page('pages/01_data_collection.py')
+
+    # Button to navigate to Data Organization Page and pass data
+    if st.button('Go to Data Organization with Data'):
+        # Navigating to Data Organization Page
+        st.switch_page('pages/02_data_organization.py')
+
+    if st.button('Proceed to Model Selection'):
+        st.switch_page('pages/03_model_selection.py')
+
+    if st.button('Proceed to encoding vector storage'):
+        st.switch_page('pages/04_encoding_storage.py')
+
+    if st.button('Proceed to Q&A Testing'):
+        st.switch_page('pages/05_testing_qa.py')
     
-    # Sidebar navigation
-    pages = {
-        'Data Collection': data_collection,
-        'Data Organization': data_organization,
-        # Other pages...
-    }
     
-    selected_page = st.sidebar.radio('Navigate', list(pages.keys()))
-    
-    # Load the dataframe from session state
-    if 'data' in st.session_state:
-        df = st.session_state['data']
-    else:
-        df = None
-    
-    # Pass the dataframe to the selected page
-    pages[selected_page].main(df)
+    # Render the navigation menu
+    # menu()
 
 if __name__ == '__main__':
     main()
-    

@@ -1,6 +1,6 @@
 # 02_data_organization.py
 import streamlit as st
-from langchain.document_loaders import DataFrameLoader
+from langchain_community.document_loaders import DataFrameLoader
 from langchain.text_splitter import CharacterTextSplitter
 
 def process_data(df):
@@ -17,6 +17,9 @@ def process_data(df):
         st.write(texts)
     else:
         st.warning('No data available. Please collect data first.')
+
+    if st.button('Proceed to Model Selection'):
+        st.switch_page('pages/03_model_selection.py')
 
 def main(df):
     st.title('Data Organization')
