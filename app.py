@@ -1,5 +1,5 @@
 import streamlit as st
-import  os
+import os
 from menu import menu
 
 st.set_page_config(page_title='Knowledge Navigator', layout='wide')
@@ -24,8 +24,20 @@ def main():
 
     if st.button('Proceed to Q&A Testing'):
         st.switch_page('pages/05_testing_qa.py')
-    
-    
+
+    # Check if 'data' state variable is defined
+    if 'data' in st.session_state:
+        st.write("Data Available")
+        st.write("Data (URL dataframe) is defined.")
+    else:
+        st.write("Data (URL dataframe) is not defined.")
+
+    # Check if 'docs' state variable is defined
+    if 'docs' in st.session_state:
+        st.write("Docs (fetched and stored data collection) is defined.")
+    else:
+        st.write("Docs (fetched and stored data collection) is not defined.")
+
     # Render the navigation menu
     # menu()
 
