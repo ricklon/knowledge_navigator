@@ -3,6 +3,8 @@ import streamlit as st
 import pandas as pd
 from langchain_community.document_loaders import AsyncHtmlLoader
 from langchain.schema import Document
+from pydantic import BaseModel
+
 from crewai import Agent, Task, Crew
 from crewai_tools import BaseTool
 import json
@@ -12,8 +14,8 @@ from bs4 import BeautifulSoup
 
 # Define the custom tool for analyzing HTML content
 class HtmlContentAnalyzer(BaseTool):
-    name = "HTML Content Analyzer"
-    description = "Analyzes HTML content to find and report image and video tags."
+    name: str = "HTML Content Analyzer"
+    description: str = "Analyzes HTML content to find and report image and video tags."
 
     def _run(self, html_content: str) -> str:
         soup = BeautifulSoup(html_content, 'html.parser')
